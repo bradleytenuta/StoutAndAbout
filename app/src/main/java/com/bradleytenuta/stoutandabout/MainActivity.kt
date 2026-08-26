@@ -25,10 +25,12 @@ import androidx.compose.ui.unit.dp
 import com.bradleytenuta.stoutandabout.ui.theme.StoutAboutTheme
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.plugin.LocationPuck3D
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -113,6 +115,7 @@ fun WelcomeScreen(onGrantPermission: () -> Unit) {
     }
 }
 
+@OptIn(MapboxExperimental::class)
 @Composable
 fun MapScreen() {
     val mapViewportState = rememberMapViewportState()
@@ -126,6 +129,10 @@ fun MapScreen() {
                 enabled = true
                 puckBearingEnabled = true
                 puckBearing = PuckBearing.HEADING
+                locationPuck = LocationPuck3D(
+                    modelUri = "asset://casual_character.glb",
+                    modelScale = listOf(60f, 60f, 60f)
+                )
             }
             mapView.gestures.updateSettings {
                 scrollEnabled = false
