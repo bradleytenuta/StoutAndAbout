@@ -38,7 +38,8 @@ The app provides a real-time, 3D map interface that tracks the user's GPS locati
 
 ## Context for AI Agent
 When assisting with this project, prioritize:
-1. **Mapbox Integration:** Focus on 3D model rendering, camera positioning (follow mode), and drawing custom markers.
+1. **Official Documentation:** Always refer to and follow the [Mapbox Android SDK Guides](https://docs.mapbox.com/android/maps/guides/) and all its sub-pages as the primary source of truth for implementation.
+2. **Mapbox Integration:** Focus on 3D model rendering, camera positioning (follow mode), and drawing custom markers.
 2. **Location Logic:** High-accuracy location updates and geofencing logic for pub entry detection.
 3. **Compose Integration:** How Mapbox's `MapView` is hosted and managed within a Jetpack Compose `Scaffold`.
 4. **Interaction Constraints:** Ensuring manual map gestures are disabled to maintain the "follow" experience.
