@@ -14,11 +14,22 @@ The app provides a real-time, 3D map interface that tracks the user's GPS locati
 - **Automatic Visit Detection:** The app utilizes precise GPS coordinates to detect when a user's location overlaps with a pub's coordinates.
 
 ## Technical Stack
-- **Language:** Kotlin
-- **UI Framework:** Jetpack Compose
-- **Map Engine:** Mapbox Maps SDK for Android
+- **Language:** Kotlin (v2.2.10)
+- **UI Framework:** Jetpack Compose (BOM v2026.02.01)
+- **Map Engine:** Mapbox Maps SDK for Android (v11.29.0)
+- **Android Version:** API 35 (Android 15)
+- **Build System:** Gradle with AGP v9.3.1
 - **Location Services:** High-accuracy GPS tracking
 - **3D Rendering:** Mapbox 3D model support
+
+## Documentation
+- **Mapbox Android SDK Guides:** https://docs.mapbox.com/android/maps/guides/
+
+## Key Library Versions
+- `androidx-core-ktx`: 1.10.1
+- `androidx-lifecycle-runtime-ktx`: 2.6.1
+- `androidx-activity-compose`: 1.8.0
+- `mapbox-maps`: 11.29.0
 
 ## Project Structure
 - `app/`: Main Android application module.
