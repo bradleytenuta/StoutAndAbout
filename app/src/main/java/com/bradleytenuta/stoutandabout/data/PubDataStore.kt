@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.Log
 import com.mapbox.geojson.FeatureCollection
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 
@@ -12,8 +15,8 @@ import java.io.InputStreamReader
  */
 object PubDataStore {
     private const val TAG = "PubDataStore"
-    private var _pubs = listOf<Pub>()
-    val pubs: List<Pub> get() = _pubs
+    private val _pubs = MutableStateFlow<List<Pub>>(emptyList())
+    val pubs: StateFlow<List<Pub>> = _pubs.asStateFlow()
 
     /**
      * Initializes the store by reading the GeoJSON file from assets.
@@ -25,8 +28,9 @@ object PubDataStore {
                 context.assets.open("london-pubs.geojson").use { inputStream ->
                     val reader = InputStreamReader(inputStream)
                     val featureCollection = FeatureCollection.fromJson(reader.readText())
-                    _pubs = featureCollection.features()?.map { Pub(it) } ?: emptyList()
-                    Log.d(TAG, "Successfully loaded ${_pubs.size} pubs.")
+                    val loadedPubs = featureCollection.features()?.map { Pub(it) } ?: emptyList()
+                    _pubs.value = loadedPubs
+                    Log.d(TAG, "Successfully loaded ${loadedPubs.size} pubs.")
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading pubs GeoJSON", e)

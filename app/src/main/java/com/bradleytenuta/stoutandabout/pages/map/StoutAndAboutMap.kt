@@ -3,13 +3,24 @@ package com.bradleytenuta.stoutandabout.pages.map
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.bradleytenuta.stoutandabout.data.PubDataStore
+import com.mapbox.maps.MapboxDelicateApi
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.style.ColorValue
+import com.mapbox.maps.extension.compose.style.DoubleValue
+import com.mapbox.maps.extension.compose.style.layers.generated.FillExtrusionLayer
+import com.mapbox.maps.extension.compose.style.sources.GeoJSONData
+import com.mapbox.maps.extension.compose.style.sources.generated.rememberGeoJsonSourceState
 import com.mapbox.maps.plugin.LocationPuck3D
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.gestures.gestures
@@ -17,13 +28,15 @@ import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateBearing
 import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 
-@OptIn(MapboxExperimental::class)
+@OptIn(MapboxExperimental::class, MapboxDelicateApi::class)
 @Composable
 fun StoutAndAboutMap(
     mapViewportState: MapViewportState,
     isFreeRoam: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val pubs by PubDataStore.pubs.collectAsState()
+
     MapboxMap(
         modifier = modifier.fillMaxSize(),
         mapViewportState = mapViewportState,
@@ -36,6 +49,21 @@ fun StoutAndAboutMap(
             Attribution(contentPadding = PaddingValues(start = 100.dp, bottom = 36.dp))
         }
     ) {
+        val sourceState = rememberGeoJsonSourceState()
+        LaunchedEffect(pubs) {
+            sourceState.data = GeoJSONData(pubs.map { it.feature })
+        }
+
+        FillExtrusionLayer(
+            sourceState = sourceState,
+            layerId = "pubs-extrusion-layer"
+        ) {
+            fillExtrusionColor = ColorValue(Color(0xFFD8BFD8))
+            fillExtrusionHeight = DoubleValue(100.0)
+            fillExtrusionOpacity = DoubleValue(0.9)
+            fillExtrusionBase = DoubleValue(0.0)
+        }
+
         MapEffect(Unit) { mapView ->
             mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS)
             mapView.location.updateSettings {
