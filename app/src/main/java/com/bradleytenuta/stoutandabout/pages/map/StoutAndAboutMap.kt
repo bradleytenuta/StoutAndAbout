@@ -52,26 +52,16 @@ fun StoutAndAboutMap(
         }
 
         MapEffect(isFreeRoam) { mapView ->
-            if (isFreeRoam) {
-                mapView.gestures.updateSettings {
-                    scrollEnabled = true
-                    pinchToZoomEnabled = true
-                    rotateEnabled = true
-                    pitchEnabled = true
-                    doubleTapToZoomInEnabled = true
-                    doubleTouchToZoomOutEnabled = true
-                    quickZoomEnabled = true
-                }
-            } else {
-                mapView.gestures.updateSettings {
-                    scrollEnabled = false
-                    pinchToZoomEnabled = false
-                    rotateEnabled = false
-                    pitchEnabled = false
-                    doubleTapToZoomInEnabled = false
-                    doubleTouchToZoomOutEnabled = false
-                    quickZoomEnabled = false
-                }
+            mapView.gestures.updateSettings {
+                scrollEnabled = isFreeRoam
+                pinchToZoomEnabled = isFreeRoam
+                rotateEnabled = isFreeRoam
+                pitchEnabled = isFreeRoam
+                doubleTapToZoomInEnabled = isFreeRoam
+                doubleTouchToZoomOutEnabled = isFreeRoam
+                quickZoomEnabled = isFreeRoam
+            }
+            if (!isFreeRoam) {
                 mapViewportState.transitionToFollowPuckState(
                     FollowPuckViewportStateOptions.Builder()
                         .zoom(17.0)
