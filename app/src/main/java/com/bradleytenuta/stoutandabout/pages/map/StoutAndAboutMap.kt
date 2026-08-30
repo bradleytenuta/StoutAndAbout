@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.bradleytenuta.stoutandabout.pages.map.effects.LocationVisitEffect
 import com.bradleytenuta.stoutandabout.pages.map.effects.PubPolygonsEffect
 import com.bradleytenuta.stoutandabout.pages.map.effects.StandardStyleEffect
 import com.mapbox.maps.MapboxExperimental
@@ -39,6 +40,7 @@ fun StoutAndAboutMap(
     ) {
         StandardStyleEffect()
         PubPolygonsEffect()
+        LocationVisitEffect()
 
         MapEffect(Unit) { mapView ->
             mapView.location.updateSettings {
