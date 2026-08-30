@@ -19,6 +19,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Inject Mapbox Access Token from gradle.properties
+        val mapboxAccessToken = project.findProperty("MAPBOX_DOWNLOADS_TOKEN") ?: ""
+        resValue("string", "mapbox_access_token", mapboxAccessToken.toString())
     }
 
     buildTypes {
@@ -34,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        resValues = true
     }
 }
 
