@@ -57,7 +57,18 @@ class WelcomeScreen {
                             }
                         }
                     )
-                    1 -> CharacterSelectionPage().Content(onCharacterSelected, onComplete)
+                    1 -> CharacterSelectionPage().Content(
+                        onCharacterSelected = onCharacterSelected,
+                        onComplete = {
+                            if (locationPermissionGranted) {
+                                onComplete()
+                            } else {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(0)
+                                }
+                            }
+                        }
+                    )
                 }
             }
 

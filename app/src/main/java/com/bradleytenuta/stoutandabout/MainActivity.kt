@@ -26,7 +26,9 @@ class MainActivity : ComponentActivity(), PermissionsListener {
         enableEdgeToEdge()
 
         permissionGranted = PermissionsManager.areLocationPermissionsGranted(this)
-        if (!permissionGranted) {
+        if (permissionGranted) {
+            isWelcomeCompleted = true
+        } else {
             permissionsManager = PermissionsManager(this)
         }
 
