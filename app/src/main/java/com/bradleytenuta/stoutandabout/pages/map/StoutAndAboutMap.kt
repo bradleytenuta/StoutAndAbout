@@ -48,10 +48,11 @@ fun StoutAndAboutMap(
                 puckBearingEnabled = true
                 puckBearing = PuckBearing.HEADING
                 locationPuck = LocationPuck3D(
-                    modelUri = "asset://casual_character.glb",
-                    modelScale = listOf(60f, 60f, 60f),
+                    modelUri = "asset://beer_bottle.glb",
+                    // Scale and rotation could differ for each model we use.
+                    modelScale = listOf(70f, 70f, 70f),
                     // Adjust the 3rd value (90f) if the character faces the wrong direction
-                    modelRotation = listOf(0f, 0f, 180f)
+                    modelRotation = listOf(0f, 0f, 0f)
                 )
             }
         }
