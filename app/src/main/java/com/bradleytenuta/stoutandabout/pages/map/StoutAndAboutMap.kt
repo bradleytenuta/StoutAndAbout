@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bradleytenuta.stoutandabout.models.PuckModel
+import com.bradleytenuta.stoutandabout.pages.map.effects.FreeRoamEffect
 import com.bradleytenuta.stoutandabout.pages.map.effects.LocationVisitEffect
 import com.bradleytenuta.stoutandabout.pages.map.effects.PubPolygonsEffect
 import com.bradleytenuta.stoutandabout.pages.map.effects.StandardStyleEffect
@@ -15,10 +16,7 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.plugin.LocationPuck3D
 import com.mapbox.maps.plugin.PuckBearing
-import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateBearing
-import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 
 @OptIn(MapboxExperimental::class)
 @Composable
@@ -43,6 +41,7 @@ fun StoutAndAboutMap(
         StandardStyleEffect()
         PubPolygonsEffect()
         LocationVisitEffect()
+        FreeRoamEffect(isFreeRoam = isFreeRoam, mapViewportState = mapViewportState)
 
         MapEffect(puckModel) { mapView ->
             mapView.location.updateSettings {
@@ -53,27 +52,6 @@ fun StoutAndAboutMap(
                     modelUri = puckModel.uri,
                     modelScale = puckModel.scale,
                     modelRotation = puckModel.rotation
-                )
-            }
-        }
-
-        MapEffect(isFreeRoam) { mapView ->
-            mapView.gestures.updateSettings {
-                scrollEnabled = isFreeRoam
-                pinchToZoomEnabled = isFreeRoam
-                rotateEnabled = isFreeRoam
-                pitchEnabled = isFreeRoam
-                doubleTapToZoomInEnabled = isFreeRoam
-                doubleTouchToZoomOutEnabled = isFreeRoam
-                quickZoomEnabled = isFreeRoam
-            }
-            if (!isFreeRoam) {
-                mapViewportState.transitionToFollowPuckState(
-                    FollowPuckViewportStateOptions.Builder()
-                        .zoom(17.0)
-                        .bearing(FollowPuckViewportStateBearing.SyncWithLocationPuck)
-                        .pitch(45.0)
-                        .build()
                 )
             }
         }
