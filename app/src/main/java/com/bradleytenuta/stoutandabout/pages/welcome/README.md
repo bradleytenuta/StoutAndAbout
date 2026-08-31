@@ -15,6 +15,7 @@ The first page of the onboarding flow.
 - Explains why the app needs location access.
 - Provides a button to trigger the system permission dialog.
 - **Visual Feedback**: Once permission is granted, the button text is replaced by a green checkmark icon.
+- **Fallback Guidance**: Displays an italicized message advising the user to check settings if the system popup doesn't appear.
 
 ### [CharacterSelectionPage.kt](file:///E:/Code/AndroidStudioProjects/StoutAndAbout/app/src/main/java/com/bradleytenuta/stoutandabout/pages/welcome/CharacterSelectionPage.kt)
 The second page of the onboarding flow.

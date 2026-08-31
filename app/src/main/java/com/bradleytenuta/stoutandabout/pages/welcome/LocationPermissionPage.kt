@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseBlack
@@ -59,6 +60,16 @@ class LocationPermissionPage {
                 } else {
                     Text(text = "Grant Location Permission")
                 }
+            }
+            if (!locationPermissionGranted) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "If you do not see a popup, please grant permission in your device settings.",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontStyle = FontStyle.Italic,
+                    color = RubberHoseBlack,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
