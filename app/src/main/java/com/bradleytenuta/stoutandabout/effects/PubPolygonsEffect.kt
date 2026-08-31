@@ -1,4 +1,4 @@
-package com.bradleytenuta.stoutandabout.pages.map.effects
+package com.bradleytenuta.stoutandabout.effects
 
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -94,7 +94,9 @@ fun PubPolygonsEffect() {
     CircleAnnotationGroup(
         annotations = markers,
         annotationConfig = null
-    )
+    ) {
+        maxZoom = 20.0
+    }
 }
 
 private fun calculateCentroid(geometry: Geometry, factory: GeometryFactory): Point? {

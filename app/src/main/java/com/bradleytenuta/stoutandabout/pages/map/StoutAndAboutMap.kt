@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bradleytenuta.stoutandabout.models.PuckModel
-import com.bradleytenuta.stoutandabout.pages.map.effects.FreeRoamEffect
-import com.bradleytenuta.stoutandabout.pages.map.effects.LocationVisitEffect
-import com.bradleytenuta.stoutandabout.pages.map.effects.PubPolygonsEffect
-import com.bradleytenuta.stoutandabout.pages.map.effects.StandardStyleEffect
+import com.bradleytenuta.stoutandabout.effects.FreeRoamEffect
+import com.bradleytenuta.stoutandabout.effects.LocationVisitEffect
+import com.bradleytenuta.stoutandabout.effects.PubPolygonsEffect
+import com.bradleytenuta.stoutandabout.effects.StandardStyleEffect
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap

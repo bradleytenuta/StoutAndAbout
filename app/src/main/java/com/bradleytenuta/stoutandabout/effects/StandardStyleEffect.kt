@@ -1,4 +1,4 @@
-package com.bradleytenuta.stoutandabout.pages.map.effects
+package com.bradleytenuta.stoutandabout.effects
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

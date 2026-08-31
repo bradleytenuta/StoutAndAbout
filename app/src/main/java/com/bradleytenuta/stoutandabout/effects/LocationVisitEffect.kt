@@ -1,4 +1,4 @@
-package com.bradleytenuta.stoutandabout.pages.map.effects
+package com.bradleytenuta.stoutandabout.effects
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable

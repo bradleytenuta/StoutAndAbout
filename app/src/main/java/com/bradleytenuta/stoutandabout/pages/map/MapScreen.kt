@@ -11,7 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.bradleytenuta.stoutandabout.models.PuckModel
-import com.bradleytenuta.stoutandabout.pages.effects.SnackbarHost
+import com.bradleytenuta.stoutandabout.effects.SnackbarHost
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import kotlinx.coroutines.launch

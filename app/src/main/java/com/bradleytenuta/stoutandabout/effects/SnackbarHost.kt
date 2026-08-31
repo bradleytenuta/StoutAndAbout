@@ -1,4 +1,4 @@
-package com.bradleytenuta.stoutandabout.pages.effects
+package com.bradleytenuta.stoutandabout.effects
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
