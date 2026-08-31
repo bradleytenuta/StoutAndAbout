@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import com.bradleytenuta.stoutandabout.models.PuckModel
 import com.bradleytenuta.stoutandabout.pages.effects.SnackbarHost
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 class MapScreen {
     @OptIn(MapboxExperimental::class)
     @Composable
-    fun Content() {
+    fun Content(puckModel: PuckModel = PuckModel.BEER_BOTTLE) {
         val mapViewportState = rememberMapViewportState()
         var isFreeRoam by remember { mutableStateOf(false) }
         val snackbarHostState = remember { SnackbarHostState() }
@@ -29,7 +30,8 @@ class MapScreen {
         Box(modifier = Modifier.fillMaxSize()) {
             StoutAndAboutMap(
                 mapViewportState = mapViewportState,
-                isFreeRoam = isFreeRoam
+                isFreeRoam = isFreeRoam,
+                puckModel = puckModel
             )
 
             // Gesture interceptor: Only active when NOT in free roam

@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.bradleytenuta.stoutandabout.models.PuckModel
 import com.bradleytenuta.stoutandabout.pages.WelcomeScreen
 import com.bradleytenuta.stoutandabout.pages.map.MapScreen
 import com.bradleytenuta.stoutandabout.ui.theme.StoutAboutTheme
@@ -17,6 +18,8 @@ import com.mapbox.android.core.permissions.PermissionsManager
 class MainActivity : ComponentActivity(), PermissionsListener {
     private lateinit var permissionsManager: PermissionsManager
     private var permissionGranted by mutableStateOf(false)
+    private var selectedPuckModel by mutableStateOf(PuckModel.BEER_BOTTLE)
+    private var isWelcomeCompleted by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +32,19 @@ class MainActivity : ComponentActivity(), PermissionsListener {
 
         setContent {
             StoutAboutTheme {
-                if (permissionGranted) {
-                    MapScreen().Content()
+                if (permissionGranted && isWelcomeCompleted) {
+                    MapScreen().Content(selectedPuckModel)
                 } else {
                     WelcomeScreen().Content(
+                        locationPermissionGranted = permissionGranted,
                         onGrantPermission = {
                             permissionsManager.requestLocationPermissionsFromManifest(this)
+                        },
+                        onCharacterSelected = { model ->
+                            selectedPuckModel = model
+                        },
+                        onComplete = {
+                            isWelcomeCompleted = true
                         }
                     )
                 }

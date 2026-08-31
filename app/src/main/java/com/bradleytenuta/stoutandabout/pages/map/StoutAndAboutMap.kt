@@ -25,7 +25,8 @@ import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 fun StoutAndAboutMap(
     mapViewportState: MapViewportState,
     isFreeRoam: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    puckModel: PuckModel
 ) {
     MapboxMap(
         modifier = modifier.fillMaxSize(),
@@ -43,16 +44,15 @@ fun StoutAndAboutMap(
         PubPolygonsEffect()
         LocationVisitEffect()
 
-        MapEffect(Unit) { mapView ->
-            val defaultModel = PuckModel.BEER_BOTTLE
+        MapEffect(puckModel) { mapView ->
             mapView.location.updateSettings {
                 enabled = true
                 puckBearingEnabled = true
                 puckBearing = PuckBearing.HEADING
                 locationPuck = LocationPuck3D(
-                    modelUri = defaultModel.uri,
-                    modelScale = defaultModel.scale,
-                    modelRotation = defaultModel.rotation
+                    modelUri = puckModel.uri,
+                    modelScale = puckModel.scale,
+                    modelRotation = puckModel.rotation
                 )
             }
         }
