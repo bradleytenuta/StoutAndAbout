@@ -1,6 +1,5 @@
 package com.bradleytenuta.stoutandabout.pages.map
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
@@ -11,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import com.bradleytenuta.stoutandabout.models.PuckModel
 import com.bradleytenuta.stoutandabout.pages.effects.SnackbarHost
 import com.mapbox.maps.MapboxExperimental
@@ -34,32 +32,14 @@ class MapScreen {
                 puckModel = puckModel
             )
 
-            // Gesture interceptor: Only active when NOT in free roam
-            if (!isFreeRoam) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onDoubleTap = {
-                                    isFreeRoam = true
-                                    scope.launch {
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                        snackbarHostState.showSnackbar("Entering free roam")
-                                    }
-                                }
-                            )
-                        }
-                )
-            }
-
             FreeRoamButton(
-                visible = isFreeRoam,
+                isFreeRoam = isFreeRoam,
                 onClick = {
-                    isFreeRoam = false
+                    isFreeRoam = !isFreeRoam
                     scope.launch {
                         snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar("Entering follow")
+                        val message = if (isFreeRoam) "Entering free roam" else "Entering follow"
+                        snackbarHostState.showSnackbar(message)
                     }
                 }
             )
