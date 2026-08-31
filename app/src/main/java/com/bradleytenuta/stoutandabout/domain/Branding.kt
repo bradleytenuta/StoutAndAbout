@@ -10,5 +10,13 @@ enum class Branding(
     GREENE_KING(
         brandName = "Greene King",
         iconPath = "branding/greene-king.png"
+    ),
+    WETHERSPOON(
+        brandName = "Wetherspoon",
+        iconPath = "branding/wetherspoon.png"
+    ),
+    DEFAULT(
+        brandName = "",
+        iconPath = "branding/default.png"
     )
 }

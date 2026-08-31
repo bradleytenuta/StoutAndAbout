@@ -19,7 +19,6 @@ import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseWhite
 import com.bradleytenuta.stoutandabout.util.toMapbox
 import com.bradleytenuta.stoutandabout.util.toJts
 import com.mapbox.geojson.Feature
-import com.mapbox.geojson.Geometry
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.MultiPolygon
 import com.mapbox.geojson.Point
@@ -35,7 +34,10 @@ import com.mapbox.maps.extension.compose.style.sources.GeoJSONData
 import com.mapbox.maps.extension.compose.style.sources.generated.rememberGeoJsonSourceState
 import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Geometry as JtsGeometry
 
 @OptIn(MapboxExperimental::class, MapboxDelicateApi::class)
 @Composable
@@ -57,62 +59,78 @@ fun PubPolygonsEffect() {
     var iconMarkers by remember { mutableStateOf<List<PointAnnotationOptions>>(emptyList()) }
 
     LaunchedEffect(pubs, brandingIcons) {
-        val features = pubs.mapNotNull { pub ->
-            val geometry = pub.feature.geometry()
-            when (geometry) {
-                is Polygon, is MultiPolygon -> {
-                    processPolygon(geometry, pub.feature, geometryFactory)
+        withContext(Dispatchers.Default) {
+            val processedFeatures = mutableListOf<Feature>()
+            val tempCircleMarkers = mutableListOf<CircleAnnotationOptions>()
+            val tempIconMarkers = mutableListOf<PointAnnotationOptions>()
+
+            pubs.forEach { pub ->
+                val geometry = pub.feature.geometry() ?: return@forEach
+                
+                // 1. Convert to JTS once
+                val jtsGeom: JtsGeometry? = when (geometry) {
+                    is Point -> geometry.toJts(geometryFactory)
+                    is LineString -> geometry.toJts(geometryFactory)
+                    is Polygon -> geometry.toJts(geometryFactory)
+                    is MultiPolygon -> geometry.toJts(geometryFactory)
+                    else -> null
                 }
-                is Point -> {
-                    processPoint(geometry, pub.feature, geometryFactory)
+
+                if (jtsGeom == null) {
+                    processedFeatures.add(pub.feature)
+                    return@forEach
                 }
-                is LineString -> {
-                    val firstCoord = geometry.coordinates().firstOrNull()
-                    if (firstCoord != null) {
-                        processPoint(firstCoord, pub.feature, geometryFactory)
-                    } else {
-                        pub.feature
+
+                // 2. Process for Extrusion Feature
+                try {
+                    val bufferedJts = when (geometry) {
+                        is Polygon, is MultiPolygon -> jtsGeom.buffer(0.00001)
+                        is Point -> jtsGeom.buffer(0.00010)
+                        is LineString -> {
+                            // Replicate previous logic: use first coordinate as a point
+                            geometry.coordinates().firstOrNull()?.toJts(geometryFactory)?.buffer(0.00010)
+                        }
+                        else -> null
                     }
+                    val bufferedMapbox = bufferedJts?.toMapbox()
+                    if (bufferedMapbox != null) {
+                        processedFeatures.add(Feature.fromGeometry(bufferedMapbox, pub.feature.properties(), pub.feature.id()))
+                    } else {
+                        processedFeatures.add(pub.feature)
+                    }
+                } catch (_: Exception) {
+                    processedFeatures.add(pub.feature)
                 }
-                else -> {
-                    pub.feature
+
+                // 3. Process for Markers
+                try {
+                    val centroid = jtsGeom.centroid
+                    val markerPoint = Point.fromLngLat(centroid.x, centroid.y)
+
+                    val brandEnum = Branding.entries.find { it.brandName == pub.brand } ?: Branding.DEFAULT
+                    val iconBitmap = brandingIcons[brandEnum]
+
+                    if (iconBitmap != null) {
+                        tempIconMarkers.add(
+                            PointAnnotationOptions()
+                                .withPoint(markerPoint)
+                                .withIconImage(iconBitmap)
+                                .withIconSize(0.5)
+                        )
+                    }
+                } catch (_: Exception) {
+                    // Ignore marker if centroid fails
                 }
             }
-        }
-        sourceState.data = GeoJSONData(features)
 
-        // Calculate markers (centroids)
-        val tempCircleMarkers = mutableListOf<CircleAnnotationOptions>()
-        val tempIconMarkers = mutableListOf<PointAnnotationOptions>()
-
-        pubs.forEach { pub ->
-            val geometry = pub.feature.geometry() ?: return@forEach
-            val centroid = calculateCentroid(geometry, geometryFactory) ?: return@forEach
-            
-            val brandEnum = Branding.entries.find { it.brandName == pub.brand }
-            val iconBitmap = brandEnum?.let { brandingIcons[it] }
-
-            if (iconBitmap != null) {
-                tempIconMarkers.add(
-                    PointAnnotationOptions()
-                        .withPoint(centroid)
-                        .withIconImage(iconBitmap)
-                        .withIconSize(0.5)
-                )
-            } else {
-                tempCircleMarkers.add(
-                    CircleAnnotationOptions()
-                        .withPoint(centroid)
-                        .withCircleColor(RubberHoseBlack.toArgb())
-                        .withCircleRadius(6.0)
-                        .withCircleStrokeColor(RubberHoseWhite.toArgb())
-                        .withCircleStrokeWidth(2.0)
-                )
+            // 4. Update states on main thread
+            withContext(Dispatchers.Main) {
+                sourceState.data = GeoJSONData(processedFeatures)
+                circleMarkers = tempCircleMarkers
+                iconMarkers = tempIconMarkers
+                Log.d("PubPolygonsEffect", "Processed ${pubs.size} pubs: ${circleMarkers.size} circles, ${iconMarkers.size} icons")
             }
         }
-        circleMarkers = tempCircleMarkers
-        iconMarkers = tempIconMarkers
-        Log.d("PubPolygonsEffect", "Created ${circleMarkers.size} circle markers and ${iconMarkers.size} icon markers for ${pubs.size} pubs")
     }
 
     FillExtrusionLayer(
@@ -137,61 +155,5 @@ fun PubPolygonsEffect() {
         annotationConfig = null
     ) {
         maxZoom = 20.0
-    }
-}
-
-private fun calculateCentroid(geometry: Geometry, factory: GeometryFactory): Point? {
-    return try {
-        val jtsGeom = when (geometry) {
-            is Point -> geometry.toJts(factory)
-            is LineString -> geometry.toJts(factory)
-            is Polygon -> geometry.toJts(factory)
-            is MultiPolygon -> geometry.toJts(factory)
-            else -> null
-        }
-        val centroid = jtsGeom?.centroid
-        centroid?.let { Point.fromLngLat(it.x, it.y) }
-    } catch (_: Exception) {
-        null
-    }
-}
-
-private fun processPolygon(geometry: Geometry, feature: Feature, factory: GeometryFactory): Feature {
-    return try {
-        val jtsGeom = when (geometry) {
-            is Polygon -> geometry.toJts(factory)
-            is MultiPolygon -> geometry.toJts(factory)
-            else -> null
-        }
-
-        // Buffer by ~1 meter in degrees (approx 0.00001)
-        val bufferedJts = jtsGeom?.buffer(0.00001)
-        val bufferedMapbox = bufferedJts?.toMapbox()
-
-        if (bufferedMapbox != null) {
-            Feature.fromGeometry(bufferedMapbox, feature.properties(), feature.id())
-        } else {
-            feature
-        }
-    } catch (_: Exception) {
-        feature
-    }
-}
-
-private fun processPoint(geometry: Point, feature: Feature, factory: GeometryFactory): Feature {
-    return try {
-        val jtsPoint = geometry.toJts(factory)
-
-        // 10m buffer in degrees.
-        val bufferedJts = jtsPoint.buffer(0.00010)
-        val bufferedMapbox = bufferedJts?.toMapbox()
-
-        if (bufferedMapbox != null) {
-            Feature.fromGeometry(bufferedMapbox, feature.properties(), feature.id())
-        } else {
-            feature
-        }
-    } catch (_: Exception) {
-        feature
     }
 }
