@@ -1,5 +1,6 @@
 package com.bradleytenuta.stoutandabout.util
 
+import com.mapbox.geojson.LineString
 import com.mapbox.geojson.MultiPolygon
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
@@ -13,6 +14,13 @@ import org.locationtech.jts.geom.Polygon as JtsPolygon
  */
 fun Point.toJts(factory: GeometryFactory): org.locationtech.jts.geom.Point {
     return factory.createPoint(Coordinate(this.longitude(), this.latitude()))
+}
+
+/**
+ * Extension to convert Mapbox LineString to JTS LineString
+ */
+fun LineString.toJts(factory: GeometryFactory): org.locationtech.jts.geom.LineString {
+    return factory.createLineString(this.coordinates().map { Coordinate(it.longitude(), it.latitude()) }.toTypedArray())
 }
 
 /**

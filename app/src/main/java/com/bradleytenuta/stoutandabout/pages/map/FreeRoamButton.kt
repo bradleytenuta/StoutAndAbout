@@ -22,12 +22,12 @@ fun BoxScope.FreeRoamButton(
 ) {
     FloatingActionButton(
         onClick = onClick,
-        containerColor = if (isFreeRoam) RubberHoseWhite else RubberHoseParchment,
+        containerColor = if (isFreeRoam) RubberHoseParchment else RubberHoseWhite,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         modifier = Modifier
             .align(Alignment.BottomEnd)
             .padding(16.dp)
-            .padding(bottom = 32.dp) // Offset from Mapbox logo/attribution
+            .padding(bottom = 32.dp)
     ) {
         Icon(
             imageVector = if (isFreeRoam) Icons.Default.MyLocation else Icons.Default.Explore,
