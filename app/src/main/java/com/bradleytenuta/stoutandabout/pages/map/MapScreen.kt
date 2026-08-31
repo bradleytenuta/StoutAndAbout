@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.bradleytenuta.stoutandabout.models.PuckModel
+import com.bradleytenuta.stoutandabout.domain.PuckModel
 import com.bradleytenuta.stoutandabout.effects.SnackbarHost
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState

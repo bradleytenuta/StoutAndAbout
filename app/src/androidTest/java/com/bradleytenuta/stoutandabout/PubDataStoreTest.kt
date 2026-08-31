@@ -2,7 +2,6 @@ package com.bradleytenuta.stoutandabout
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.bradleytenuta.stoutandabout.data.PubDataStore
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue

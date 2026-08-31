@@ -1,7 +1,6 @@
 package com.bradleytenuta.stoutandabout
 
 import android.app.Application
-import com.bradleytenuta.stoutandabout.data.PubDataStore
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 

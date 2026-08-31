@@ -1,5 +1,6 @@
 package com.bradleytenuta.stoutandabout.effects
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,7 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.bradleytenuta.stoutandabout.data.PubDataStore
+import androidx.compose.ui.platform.LocalContext
+import com.bradleytenuta.stoutandabout.PubDataStore
+import com.bradleytenuta.stoutandabout.domain.Branding
 import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseBlack
 import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseWhite
 import com.bradleytenuta.stoutandabout.util.toMapbox
@@ -24,12 +27,14 @@ import com.mapbox.geojson.Polygon
 import com.mapbox.maps.MapboxDelicateApi
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotationGroup
+import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotationGroup
 import com.mapbox.maps.extension.compose.style.ColorValue
 import com.mapbox.maps.extension.compose.style.DoubleValue
 import com.mapbox.maps.extension.compose.style.layers.generated.FillExtrusionLayer
 import com.mapbox.maps.extension.compose.style.sources.GeoJSONData
 import com.mapbox.maps.extension.compose.style.sources.generated.rememberGeoJsonSourceState
 import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import org.locationtech.jts.geom.GeometryFactory
 
 @OptIn(MapboxExperimental::class, MapboxDelicateApi::class)
@@ -38,9 +43,20 @@ fun PubPolygonsEffect() {
     val pubs by PubDataStore.pubs.collectAsState()
     val sourceState = rememberGeoJsonSourceState()
     val geometryFactory = remember { GeometryFactory() }
-    var markers by remember { mutableStateOf<List<CircleAnnotationOptions>>(emptyList()) }
+    val context = LocalContext.current
+    
+    val brandingIcons = remember(context) {
+        Branding.entries.associateWith { branding ->
+            context.assets.open(branding.iconPath).use {
+                BitmapFactory.decodeStream(it)
+            }
+        }
+    }
 
-    LaunchedEffect(pubs) {
+    var circleMarkers by remember { mutableStateOf<List<CircleAnnotationOptions>>(emptyList()) }
+    var iconMarkers by remember { mutableStateOf<List<PointAnnotationOptions>>(emptyList()) }
+
+    LaunchedEffect(pubs, brandingIcons) {
         val features = pubs.mapNotNull { pub ->
             val geometry = pub.feature.geometry()
             when (geometry) {
@@ -66,19 +82,37 @@ fun PubPolygonsEffect() {
         sourceState.data = GeoJSONData(features)
 
         // Calculate markers (centroids)
-        markers = pubs.mapNotNull { pub ->
-            val geometry = pub.feature.geometry() ?: return@mapNotNull null
-            val centroid = calculateCentroid(geometry, geometryFactory)
-            centroid?.let {
-                CircleAnnotationOptions()
-                    .withPoint(it)
-                    .withCircleColor(RubberHoseBlack.toArgb())
-                    .withCircleRadius(6.0)
-                    .withCircleStrokeColor(RubberHoseWhite.toArgb())
-                    .withCircleStrokeWidth(2.0)
+        val tempCircleMarkers = mutableListOf<CircleAnnotationOptions>()
+        val tempIconMarkers = mutableListOf<PointAnnotationOptions>()
+
+        pubs.forEach { pub ->
+            val geometry = pub.feature.geometry() ?: return@forEach
+            val centroid = calculateCentroid(geometry, geometryFactory) ?: return@forEach
+            
+            val brandEnum = Branding.entries.find { it.brandName == pub.brand }
+            val iconBitmap = brandEnum?.let { brandingIcons[it] }
+
+            if (iconBitmap != null) {
+                tempIconMarkers.add(
+                    PointAnnotationOptions()
+                        .withPoint(centroid)
+                        .withIconImage(iconBitmap)
+                        .withIconSize(0.5)
+                )
+            } else {
+                tempCircleMarkers.add(
+                    CircleAnnotationOptions()
+                        .withPoint(centroid)
+                        .withCircleColor(RubberHoseBlack.toArgb())
+                        .withCircleRadius(6.0)
+                        .withCircleStrokeColor(RubberHoseWhite.toArgb())
+                        .withCircleStrokeWidth(2.0)
+                )
             }
         }
-        Log.d("PubPolygonsEffect", "Created ${markers.size} markers for ${pubs.size} pubs")
+        circleMarkers = tempCircleMarkers
+        iconMarkers = tempIconMarkers
+        Log.d("PubPolygonsEffect", "Created ${circleMarkers.size} circle markers and ${iconMarkers.size} icon markers for ${pubs.size} pubs")
     }
 
     FillExtrusionLayer(
@@ -92,7 +126,14 @@ fun PubPolygonsEffect() {
     }
 
     CircleAnnotationGroup(
-        annotations = markers,
+        annotations = circleMarkers,
+        annotationConfig = null
+    ) {
+        maxZoom = 20.0
+    }
+
+    PointAnnotationGroup(
+        annotations = iconMarkers,
         annotationConfig = null
     ) {
         maxZoom = 20.0

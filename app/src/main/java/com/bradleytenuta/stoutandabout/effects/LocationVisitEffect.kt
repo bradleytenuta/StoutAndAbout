@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import com.bradleytenuta.stoutandabout.data.PubDataStore
+import com.bradleytenuta.stoutandabout.PubDataStore
 import com.bradleytenuta.stoutandabout.util.toJts
 import com.mapbox.geojson.MultiPolygon
 import com.mapbox.geojson.Polygon

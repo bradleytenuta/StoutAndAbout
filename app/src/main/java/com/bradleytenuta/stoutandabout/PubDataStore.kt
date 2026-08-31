@@ -1,7 +1,8 @@
-package com.bradleytenuta.stoutandabout.data
+package com.bradleytenuta.stoutandabout
 
 import android.content.Context
 import android.util.Log
+import com.bradleytenuta.stoutandabout.domain.Pub
 import com.mapbox.geojson.FeatureCollection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

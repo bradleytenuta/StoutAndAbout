@@ -1,4 +1,4 @@
-package com.bradleytenuta.stoutandabout.data
+package com.bradleytenuta.stoutandabout.domain
 
 import com.mapbox.geojson.Feature
 

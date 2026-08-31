@@ -1,4 +1,4 @@
-package com.bradleytenuta.stoutandabout.models
+package com.bradleytenuta.stoutandabout.domain
 
 /**
  * Defines 3D models available for the user's location puck.
@@ -12,8 +12,8 @@ enum class PuckModel(
 ) {
     BEER_BOTTLE(
         displayName = "Beer Bottle",
-        previewImagePath = "beer_bottle.png",
-        uri = "asset://beer_bottle.glb",
+        previewImagePath = "model/beer_bottle.png",
+        uri = "asset://model/beer_bottle.glb",
         scale = listOf(70f, 70f, 70f),
         rotation = listOf(0f, 0f, 0f)
     )

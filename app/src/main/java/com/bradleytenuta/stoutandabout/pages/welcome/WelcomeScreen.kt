@@ -18,7 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.bradleytenuta.stoutandabout.models.PuckModel
+import com.bradleytenuta.stoutandabout.domain.PuckModel
 import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseBlack
 import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseParchment
 import kotlinx.coroutines.launch

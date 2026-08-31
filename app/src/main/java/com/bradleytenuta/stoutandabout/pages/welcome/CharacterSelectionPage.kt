@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.bradleytenuta.stoutandabout.models.PuckModel
+import com.bradleytenuta.stoutandabout.domain.PuckModel
 import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseBlack
 import com.bradleytenuta.stoutandabout.ui.theme.RubberHoseWhite
 

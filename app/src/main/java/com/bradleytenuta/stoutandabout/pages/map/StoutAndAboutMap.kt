@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.bradleytenuta.stoutandabout.models.PuckModel
+import com.bradleytenuta.stoutandabout.domain.PuckModel
 import com.bradleytenuta.stoutandabout.effects.FreeRoamEffect
 import com.bradleytenuta.stoutandabout.effects.LocationVisitEffect
 import com.bradleytenuta.stoutandabout.effects.PubPolygonsEffect
