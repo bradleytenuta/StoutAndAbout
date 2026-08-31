@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.bradleytenuta.stoutandabout.models.PuckModel
 import com.bradleytenuta.stoutandabout.pages.map.effects.LocationVisitEffect
 import com.bradleytenuta.stoutandabout.pages.map.effects.PubPolygonsEffect
 import com.bradleytenuta.stoutandabout.pages.map.effects.StandardStyleEffect
@@ -43,16 +44,15 @@ fun StoutAndAboutMap(
         LocationVisitEffect()
 
         MapEffect(Unit) { mapView ->
+            val defaultModel = PuckModel.BEER_BOTTLE
             mapView.location.updateSettings {
                 enabled = true
                 puckBearingEnabled = true
                 puckBearing = PuckBearing.HEADING
                 locationPuck = LocationPuck3D(
-                    modelUri = "asset://beer_bottle.glb",
-                    // Scale and rotation could differ for each model we use.
-                    modelScale = listOf(70f, 70f, 70f),
-                    // Adjust the 3rd value (90f) if the character faces the wrong direction
-                    modelRotation = listOf(0f, 0f, 0f)
+                    modelUri = defaultModel.uri,
+                    modelScale = defaultModel.scale,
+                    modelRotation = defaultModel.rotation
                 )
             }
         }
