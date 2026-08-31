@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.bradleytenuta.stoutandabout.models.PuckModel
-import com.bradleytenuta.stoutandabout.pages.WelcomeScreen
+import com.bradleytenuta.stoutandabout.pages.welcome.WelcomeScreen
 import com.bradleytenuta.stoutandabout.pages.map.MapScreen
 import com.bradleytenuta.stoutandabout.ui.theme.StoutAboutTheme
 import com.mapbox.android.core.permissions.PermissionsListener
